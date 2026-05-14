@@ -12,19 +12,19 @@ Starter scaffold for a Caltech CS 179 project on differentiable GPU image regist
 
 ## Build
 ```bash
-cmake -S /home/runner/work/Differentiable-GPU-Image-Registration/Differentiable-GPU-Image-Registration -B /home/runner/work/Differentiable-GPU-Image-Registration/Differentiable-GPU-Image-Registration/build
-cmake --build /home/runner/work/Differentiable-GPU-Image-Registration/Differentiable-GPU-Image-Registration/build
+cmake -S . -B build
+cmake --build build
 ```
 
 Optional CUDA starter build:
 ```bash
-cmake -S /home/runner/work/Differentiable-GPU-Image-Registration/Differentiable-GPU-Image-Registration -B /home/runner/work/Differentiable-GPU-Image-Registration/Differentiable-GPU-Image-Registration/build -DDGIR_ENABLE_CUDA=ON
-cmake --build /home/runner/work/Differentiable-GPU-Image-Registration/Differentiable-GPU-Image-Registration/build
+cmake -S . -B build -DDGIR_ENABLE_CUDA=ON
+cmake --build build
 ```
 
 ## Run tests
 ```bash
-cd /home/runner/work/Differentiable-GPU-Image-Registration/Differentiable-GPU-Image-Registration/build && ctest --output-on-failure
+cd build && ctest --output-on-failure
 ```
 
 ## Student TODOs
