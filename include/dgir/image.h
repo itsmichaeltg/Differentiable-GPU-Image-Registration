@@ -27,6 +27,8 @@ struct Image {
   }
 };
 
+// Utility helper for synthetic test data.
+// Returns a grayscale checkerboard image with dimensions (w, h), where each square has side cell_size pixels.
 Image make_checkerboard(int w, int h, int cell_size);
 
 }  // namespace dgir

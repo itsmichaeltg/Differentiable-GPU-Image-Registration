@@ -8,7 +8,9 @@
 namespace dgir {
 
 struct AlignmentResult {
+  // Final transform parameters after the last optimization iteration.
   TransformParams params;
+  // Per-iteration loss history (index i == loss after iteration i).
   std::vector<float> losses;
 };
 

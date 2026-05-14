@@ -28,7 +28,7 @@ cd build && ctest --output-on-failure
 
 ## Student TODOs
 1. **Module 1: Warping Engine (Person A)**
-   - Implement affine transformation kernels.
+   - Implement GPU affine warp kernels that apply affine transforms during image resampling.
    - Implement texture memory binding.
    - Implement bilinear interpolation logic.
 2. **Module 2: Alignment & Loss (Person B)**

@@ -11,6 +11,7 @@ float mse_loss(const Image& a, const Image& b);
 
 struct LossAndGradient {
   float loss = 0.0f;
+  // Gradient order is [tx, ty, theta_rad, scale], matching TransformParams.
   std::array<float, 4> grad = {0.0f, 0.0f, 0.0f, 0.0f};
 };
 
