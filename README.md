@@ -3,12 +3,11 @@
 Starter scaffold for a Caltech CS 179 project on differentiable GPU image registration.
 
 ## What's included
-- CPU baseline affine warp with bilinear sampling (`warp_affine_cpu`)
-- CPU MSE loss and numeric gradient baseline
-- CPU optimization loop (`align_images_cpu`)
-- CUDA module placeholder (`warp_affine_cuda`) with TODOs for students
-- Minimal CLI demo (`dgir_cli`)
-- Unit tests for the starter baseline
+- CMake scaffold for a two-person module split plus integration target
+- Starter APIs and data structures for affine transforms, warping, loss, and alignment
+- Explicit TODO stubs for student-owned modules
+- Minimal CLI starter (`dgir_cli`) that documents next steps
+- Unit tests that verify starter behavior and enforce TODO boundaries
 
 ## Build
 ```bash
@@ -28,8 +27,15 @@ cd build && ctest --output-on-failure
 ```
 
 ## Student TODOs
-1. Replace numeric gradient with analytic/differentiable backward pass on GPU.
-2. Implement CUDA texture-object-based affine warp in `src/warp_cuda.cu`.
-3. Add GPU parallel reduction for loss computation.
-4. Add image I/O + video output pipeline for iteration visualization.
-5. Add multiresolution pyramid to improve convergence.
+1. **Module 1: Warping Engine (Person A)**
+   - Implement affine transformation kernels.
+   - Implement texture memory binding.
+   - Implement bilinear interpolation logic.
+2. **Module 2: Alignment & Loss (Person B)**
+   - Implement MSE/Cross-correlation loss kernels.
+   - Implement parallel reduction for global loss.
+   - Implement gradient-descent parameter updates.
+3. **Integration & GUI (Joint)**
+   - Add image I/O (e.g., stb_image).
+   - Add performance benchmarking.
+   - Add visualization/video output of iterative alignment.
