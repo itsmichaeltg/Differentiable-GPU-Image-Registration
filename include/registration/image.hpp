@@ -47,5 +47,7 @@ float sample_bilinear(
 Image make_constant(int width, int height, int channels, float value);
 Image make_gradient(int width, int height);
 Image make_checkerboard(int width, int height, int tile_size);
+Image make_registration_pattern(int width, int height);
+Image downsample_half(const Image& image);
 
 }  // namespace registration

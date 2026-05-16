@@ -17,6 +17,8 @@ add_library(registration_core
     src/affine.cpp
     src/cpu_registration.cpp
     src/image.cpp
+    src/image_io.cpp
+    src/optimizer.cpp
 )
 target_include_directories(registration_core PUBLIC include)
 target_compile_options(registration_core PRIVATE -Wall -Wextra -Wpedantic)
@@ -43,3 +45,8 @@ add_registration_test(test_affine tests/test_affine.cpp)
 add_registration_test(test_image tests/test_image.cpp)
 add_registration_test(test_cpu_baseline tests/test_cpu_baseline.cpp)
 add_registration_test(test_gpu_warp tests/test_gpu_warp.cpp)
+add_registration_test(test_image_io tests/test_image_io.cpp)
+add_registration_test(test_optimizer tests/test_optimizer.cpp)
+
+add_executable(register_images tools/register_images.cpp)
+target_link_libraries(register_images PRIVATE registration_core registration_cuda)

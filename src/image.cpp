@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
+#include <utility>
 
 namespace registration {
 
@@ -209,6 +210,68 @@ Image make_checkerboard(int width, int height, int tile_size) {
         }
     }
     return image;
+}
+
+Image make_registration_pattern(int width, int height) {
+    Image image(width, height, 1);
+    float min_value = 1.0e30f;
+    float max_value = -1.0e30f;
+
+    const float cx = 0.5f * static_cast<float>(width - 1);
+    const float cy = 0.5f * static_cast<float>(height - 1);
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            const float xf = static_cast<float>(x);
+            const float yf = static_cast<float>(y);
+            const float dx = (xf - cx) / std::max(1.0f, cx);
+            const float dy = (yf - cy) / std::max(1.0f, cy);
+            const float spot_a = std::exp(-8.0f * ((dx + 0.35f) * (dx + 0.35f) + (dy - 0.25f) * (dy - 0.25f)));
+            const float spot_b = std::exp(-18.0f * ((dx - 0.30f) * (dx - 0.30f) + (dy + 0.20f) * (dy + 0.20f)));
+            const float ridge = std::sin(0.23f * xf + 0.07f * yf) + std::cos(0.11f * xf - 0.19f * yf);
+            const float value = 0.25f * ridge + 0.80f * spot_a + 0.55f * spot_b + 0.15f * dx;
+            image.at(x, y) = value;
+            min_value = std::min(min_value, value);
+            max_value = std::max(max_value, value);
+        }
+    }
+
+    const float range = max_value - min_value;
+    if (range <= 0.0f) {
+        return image;
+    }
+    for (float& value : image.pixels) {
+        value = (value - min_value) / range;
+    }
+    return image;
+}
+
+Image downsample_half(const Image& image) {
+    if (image.empty()) {
+        throw std::invalid_argument("image must not be empty");
+    }
+    const int output_width = std::max(1, (image.width + 1) / 2);
+    const int output_height = std::max(1, (image.height + 1) / 2);
+    Image output(output_width, output_height, image.channels);
+
+    for (int y = 0; y < output_height; ++y) {
+        for (int x = 0; x < output_width; ++x) {
+            for (int c = 0; c < image.channels; ++c) {
+                float sum = 0.0f;
+                int count = 0;
+                for (int dy = 0; dy < 2; ++dy) {
+                    for (int dx = 0; dx < 2; ++dx) {
+                        const int sx = std::min(image.width - 1, 2 * x + dx);
+                        const int sy = std::min(image.height - 1, 2 * y + dy);
+                        sum += image.at(sx, sy, c);
+                        ++count;
+                    }
+                }
+                output.at(x, y, c) = sum / static_cast<float>(count);
+            }
+        }
+    }
+
+    return output;
 }
 
 }  // namespace registration

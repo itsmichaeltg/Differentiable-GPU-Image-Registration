@@ -65,10 +65,23 @@ Week 2 is implemented:
 - GPU MSE uses a warp-shuffle block reduction.
 - CPU and GPU normalized cross-correlation are available for registration diagnostics.
 
+Week 3 is implemented:
+
+- CPU differentiable loss/gradient and Adam-style parameter updates.
+- Multi-resolution pyramid alignment for translation, rotation, and scale parameters.
+- Synthetic registration tests that verify loss reduction and translation recovery.
+- PGM/PPM image I/O and a `register_images` CLI demo tool.
+
 Build and test:
 
 ```bash
 cmake -S . -B build
 cmake --build build
 ctest --test-dir build --output-on-failure
+```
+
+CPU demo:
+
+```bash
+./build/register_images source.pgm target.pgm --output aligned.pgm --iterations 200 --pyramid 3
 ```
