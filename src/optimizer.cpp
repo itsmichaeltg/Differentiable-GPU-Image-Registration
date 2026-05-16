@@ -6,6 +6,7 @@
 #include <stdexcept>
 
 #include "registration/cpu_registration.hpp"
+#include "registration/gpu_registration.cuh"
 
 namespace registration {
 
@@ -35,9 +36,29 @@ void validate_optimizer_inputs(
         options.learning_rate_scale < 0.0f) {
         throw std::invalid_argument("learning rates must be non-negative");
     }
-    if (options.backend != RegistrationBackend::CPU) {
-        throw std::invalid_argument("Week 3 optimizer backend supports CPU only");
+}
+
+LossGradient evaluate_loss_gradient(
+    const Image& source,
+    const Image& target,
+    const TransformParams& params,
+    const OptimizerOptions& options) {
+    if (options.backend == RegistrationBackend::CUDA) {
+        return loss_gradient_cuda(source, target, params, options.boundary);
     }
+    return loss_gradient_cpu(source, target, params, options.boundary);
+}
+
+Image warp_for_backend(
+    const Image& source,
+    int output_width,
+    int output_height,
+    const TransformParams& params,
+    const OptimizerOptions& options) {
+    if (options.backend == RegistrationBackend::CUDA) {
+        return warp_affine_cuda(source, output_width, output_height, params, options.boundary);
+    }
+    return warp_affine_cpu(source, output_width, output_height, params, options.boundary);
 }
 
 std::vector<Image> build_pyramid(const Image& image, int requested_levels) {
@@ -236,7 +257,7 @@ RegistrationResult align_images(
 
         for (int iteration = 0; iteration < options.max_iterations; ++iteration) {
             const LossGradient gradient =
-                loss_gradient_cpu(level_source, level_target, params, options.boundary);
+                evaluate_loss_gradient(level_source, level_target, params, options);
 
             IterationRecord record;
             record.pyramid_level = level;
@@ -249,7 +270,7 @@ RegistrationResult align_images(
                 (iteration % options.callback_interval == 0 || iteration == options.max_iterations - 1)) {
                 callback(
                     record,
-                    warp_affine_cpu(level_source, level_target.width, level_target.height, params, options.boundary));
+                    warp_for_backend(level_source, level_target.width, level_target.height, params, options));
             }
 
             ++total_iterations;
@@ -269,7 +290,7 @@ RegistrationResult align_images(
     }
 
     result.params = params;
-    result.aligned = warp_affine_cpu(source, target.width, target.height, params, options.boundary);
+    result.aligned = warp_for_backend(source, target.width, target.height, params, options);
     result.final_loss = mse_cpu(result.aligned, target);
     result.iterations = total_iterations;
     return result;

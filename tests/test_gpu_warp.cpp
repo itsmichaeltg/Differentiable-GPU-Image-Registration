@@ -22,10 +22,12 @@ int main() {
 
     const Image cpu = warp_affine_cpu(image, 16, 12, transform, BoundaryMode::Clamp);
     const Image gpu = warp_affine_cuda(image, 16, 12, transform, BoundaryMode::Clamp);
+    const Image gpu_global = warp_affine_cuda_global(image, 16, 12, transform, BoundaryMode::Clamp);
     CHECK_EQ(cpu.width, gpu.width);
     CHECK_EQ(cpu.height, gpu.height);
     CHECK_EQ(cpu.channels, gpu.channels);
     CHECK_NEAR(mse_cpu(cpu, gpu), 0.0f, 1.0e-5f);
+    CHECK_NEAR(mse_cpu(cpu, gpu_global), 0.0f, 1.0e-5f);
     CHECK_NEAR(mse_cuda(cpu, gpu), 0.0f, 1.0e-5f);
     CHECK_NEAR(normalized_cross_correlation_cuda(cpu, gpu), 1.0f, 1.0e-4f);
 

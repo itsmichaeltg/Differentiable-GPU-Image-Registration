@@ -18,7 +18,6 @@ add_library(registration_core
     src/cpu_registration.cpp
     src/image.cpp
     src/image_io.cpp
-    src/optimizer.cpp
 )
 target_include_directories(registration_core PUBLIC include)
 target_compile_options(registration_core PRIVATE -Wall -Wextra -Wpedantic)
@@ -32,11 +31,16 @@ target_compile_options(registration_cuda PRIVATE
     $<$<COMPILE_LANGUAGE:CXX>:-Wall;-Wextra;-Wpedantic>
 )
 
+add_library(registration_optimizer
+    src/optimizer.cpp
+)
+target_link_libraries(registration_optimizer PUBLIC registration_core registration_cuda)
+
 enable_testing()
 
 function(add_registration_test name source)
     add_executable(${name} ${source})
-    target_link_libraries(${name} PRIVATE registration_core registration_cuda)
+    target_link_libraries(${name} PRIVATE registration_optimizer)
     target_include_directories(${name} PRIVATE tests)
     add_test(NAME ${name} COMMAND ${name})
 endfunction()
@@ -47,6 +51,13 @@ add_registration_test(test_cpu_baseline tests/test_cpu_baseline.cpp)
 add_registration_test(test_gpu_warp tests/test_gpu_warp.cpp)
 add_registration_test(test_image_io tests/test_image_io.cpp)
 add_registration_test(test_optimizer tests/test_optimizer.cpp)
+add_registration_test(test_gpu_loss_gradient tests/test_gpu_loss_gradient.cpp)
 
 add_executable(register_images tools/register_images.cpp)
-target_link_libraries(register_images PRIVATE registration_core registration_cuda)
+target_link_libraries(register_images PRIVATE registration_optimizer)
+
+add_executable(registration_bench tools/registration_bench.cpp)
+target_link_libraries(registration_bench PRIVATE registration_optimizer)
+
+add_executable(make_synthetic_pair tools/make_synthetic_pair.cpp)
+target_link_libraries(make_synthetic_pair PRIVATE registration_optimizer)

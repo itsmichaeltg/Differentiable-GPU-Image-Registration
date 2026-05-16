@@ -21,6 +21,7 @@ void print_usage(const char* program) {
         << "  --iterations N             Iterations per pyramid level (default: 150)\n"
         << "  --pyramid N                Pyramid levels (default: 1)\n"
         << "  --mode translation|rigid|similarity\n"
+        << "  --backend cpu|cuda         Optimizer backend (default: cpu)\n"
         << "  --boundary zero|clamp|wrap\n"
         << "  --lr-translation VALUE     Translation learning rate\n"
         << "  --lr-theta VALUE           Rotation learning rate\n"
@@ -103,6 +104,15 @@ int main(int argc, char** argv) {
                     options.optimize_scale = true;
                 } else {
                     throw std::invalid_argument("unknown mode: " + mode);
+                }
+            } else if (arg == "--backend") {
+                const std::string backend = need_value(arg);
+                if (backend == "cpu") {
+                    options.backend = RegistrationBackend::CPU;
+                } else if (backend == "cuda") {
+                    options.backend = RegistrationBackend::CUDA;
+                } else {
+                    throw std::invalid_argument("unknown backend: " + backend);
                 }
             } else if (arg == "--frames") {
                 frame_dir = need_value(arg);

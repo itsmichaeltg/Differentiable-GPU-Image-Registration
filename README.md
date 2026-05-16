@@ -72,6 +72,14 @@ Week 3 is implemented:
 - Synthetic registration tests that verify loss reduction and translation recovery.
 - PGM/PPM image I/O and a `register_images` CLI demo tool.
 
+Week 4 is implemented:
+
+- CUDA differentiable loss/gradient for grayscale images.
+- CUDA optimizer backend via `register_images --backend cuda`.
+- Global-memory warp baseline for texture-object profiling comparisons.
+- Benchmark, synthetic-data, profiling, test, and frame-to-video helper scripts.
+- Final report and profiling notes in `docs/` and `profiling/`.
+
 Build and test:
 
 ```bash
@@ -84,4 +92,11 @@ CPU demo:
 
 ```bash
 ./build/register_images source.pgm target.pgm --output aligned.pgm --iterations 200 --pyramid 3
+```
+
+Generate a complete demo pair:
+
+```bash
+./build/make_synthetic_pair demo
+./build/register_images demo/source.pgm demo/target.pgm --output demo/aligned.pgm --frames demo/frames --pyramid 3
 ```
