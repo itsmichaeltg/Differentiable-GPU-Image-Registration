@@ -128,21 +128,21 @@ int main(int argc, char** argv) {
             options.callback_interval = 10;
         }
 
-        const Image source = read_pnm(source_path);
-        const Image target = read_pnm(target_path);
+        const Image source = read_image(source_path);
+        const Image target = read_image(target_path);
 
         int frame = 0;
         IterationCallback callback = nullptr;
         if (write_frames) {
             std::filesystem::create_directories(frame_dir);
             callback = [&](const IterationRecord&, const Image& aligned) {
-                write_pnm(aligned, frame_name(frame_dir, frame++));
+                write_image(aligned, frame_name(frame_dir, frame++));
             };
         }
 
         const RegistrationResult result =
             align_images(source, target, TransformParams{}, options, callback);
-        write_pnm(result.aligned, output_path);
+        write_image(result.aligned, output_path);
 
         std::cout << "initial_loss=" << result.initial_loss << "\n";
         std::cout << "final_loss=" << result.final_loss << "\n";

@@ -40,5 +40,45 @@ int main() {
 
     std::filesystem::remove(temp);
     std::filesystem::remove(comment_file);
+
+    // PNG round-trip: grayscale
+    const std::filesystem::path png_gray =
+        std::filesystem::temp_directory_path() / "registration_io_test_gray.png";
+    Image gray(2, 2, 1);
+    gray.at(0, 0) = 0.0f;
+    gray.at(1, 0) = 0.25f;
+    gray.at(0, 1) = 0.5f;
+    gray.at(1, 1) = 1.0f;
+    write_png(gray, png_gray);
+    const Image loaded_gray = read_png(png_gray);
+    CHECK_EQ(loaded_gray.width, 2);
+    CHECK_EQ(loaded_gray.height, 2);
+    CHECK_EQ(loaded_gray.channels, 1);
+    CHECK_NEAR(loaded_gray.at(0, 0), 0.0f, 1.0f / 255.0f);
+    CHECK_NEAR(loaded_gray.at(1, 1), 1.0f, 1.0f / 255.0f);
+    std::filesystem::remove(png_gray);
+
+    // PNG round-trip: RGB
+    const std::filesystem::path png_rgb =
+        std::filesystem::temp_directory_path() / "registration_io_test_rgb.png";
+    Image rgb_out(2, 1, 3);
+    rgb_out.at(0, 0, 0) = 1.0f;
+    rgb_out.at(1, 0, 1) = 1.0f;
+    write_png(rgb_out, png_rgb);
+    const Image loaded_rgb = read_png(png_rgb);
+    CHECK_EQ(loaded_rgb.channels, 3);
+    CHECK_NEAR(loaded_rgb.at(0, 0, 0), 1.0f, 1.0f / 255.0f);
+    CHECK_NEAR(loaded_rgb.at(1, 0, 1), 1.0f, 1.0f / 255.0f);
+    std::filesystem::remove(png_rgb);
+
+    // read_image / write_image dispatch
+    const std::filesystem::path dispatch_png =
+        std::filesystem::temp_directory_path() / "registration_io_dispatch.png";
+    write_image(gray, dispatch_png);
+    const Image dispatched = read_image(dispatch_png);
+    CHECK_EQ(dispatched.channels, 1);
+    CHECK_NEAR(dispatched.at(1, 1), 1.0f, 1.0f / 255.0f);
+    std::filesystem::remove(dispatch_png);
+
     return 0;
 }

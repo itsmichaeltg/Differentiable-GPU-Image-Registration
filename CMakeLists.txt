@@ -9,6 +9,7 @@ set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 set(CMAKE_CUDA_ARCHITECTURES "75" CACHE STRING "CUDA architectures to build")
 
 find_package(CUDAToolkit REQUIRED)
+find_package(PNG REQUIRED)
 
 add_compile_options($<$<COMPILE_LANGUAGE:CUDA>:--generate-line-info>)
 add_compile_options($<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>)
@@ -20,6 +21,7 @@ add_library(registration_core
     src/image_io.cpp
 )
 target_include_directories(registration_core PUBLIC include)
+target_link_libraries(registration_core PUBLIC PNG::PNG)
 target_compile_options(registration_core PRIVATE -Wall -Wextra -Wpedantic)
 
 add_library(registration_cuda
