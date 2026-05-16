@@ -22,5 +22,6 @@ Image warp_affine_cpu(
     float fill_value = 0.0f);
 
 float mse_cpu(const Image& lhs, const Image& rhs);
+float normalized_cross_correlation_cpu(const Image& lhs, const Image& rhs);
 
 }  // namespace registration

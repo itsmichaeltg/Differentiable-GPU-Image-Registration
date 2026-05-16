@@ -58,6 +58,13 @@ Week 1 is implemented:
 - CUDA texture-object affine warp wrapper for grayscale images.
 - Tests for affine math, image edge cases, CPU warp/loss behavior, and optional GPU warp parity.
 
+Week 2 is implemented:
+
+- Full affine CPU/GPU warp paths share the same centered transform convention.
+- Zero, clamp, and wrap boundary modes are covered by CPU tests and optional CUDA parity tests.
+- GPU MSE uses a warp-shuffle block reduction.
+- CPU and GPU normalized cross-correlation are available for registration diagnostics.
+
 Build and test:
 
 ```bash

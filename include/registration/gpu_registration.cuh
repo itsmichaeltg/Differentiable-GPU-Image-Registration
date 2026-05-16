@@ -25,4 +25,7 @@ Image warp_affine_cuda(
     BoundaryMode boundary = BoundaryMode::Zero,
     float fill_value = 0.0f);
 
+float mse_cuda(const Image& lhs, const Image& rhs);
+float normalized_cross_correlation_cuda(const Image& lhs, const Image& rhs);
+
 }  // namespace registration

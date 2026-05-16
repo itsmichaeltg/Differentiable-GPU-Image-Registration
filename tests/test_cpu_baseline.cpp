@@ -17,6 +17,7 @@ int main() {
 
     const Image identity = warp_affine_cpu(image, 3, 2, Affine2D::identity());
     CHECK_NEAR(mse_cpu(image, identity), 0.0f, 1.0e-7f);
+    CHECK_NEAR(normalized_cross_correlation_cpu(image, identity), 1.0f, 1.0e-6f);
 
     const Image translated =
         warp_affine_cpu(image, 3, 2, Affine2D::translation(1.0f, 0.0f), BoundaryMode::Zero);
@@ -57,6 +58,7 @@ int main() {
 
     CHECK_THROWS(warp_affine_cpu(image, 0, 2, Affine2D::identity()));
     CHECK_THROWS(mse_cpu(image, Image(3, 2, 2)));
+    CHECK_THROWS(normalized_cross_correlation_cpu(Image(2, 2, 1, 5.0f), Image(2, 2, 1, 5.0f)));
 
     return 0;
 }
